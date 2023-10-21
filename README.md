@@ -1,2 +1,2 @@
-# ansible-role-sshd-hardening
-Harden's the sshd_config file
+# Ansible role: sshd_config hardening
+Harden's the /etc/ssh/sshd_config file
