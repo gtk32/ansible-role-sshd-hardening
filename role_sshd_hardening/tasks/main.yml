@@ -1,0 +1,66 @@
+---
+- name: Check if sshd daemon is running
+  ansible.builtin.service:
+    name: sshd
+    state: started
+- name: Set permissions to read-only accordingly
+  ansible.builtin.file:
+    path: "/etc/ssh/sshd_config"
+    owner: root
+    group: root
+    mode: '0600'
+  become: true
+- name: Set read permissions to keys accordingly
+  ansible.builtin.shell:
+    cmd: "chmod 0600 /etc/ssh/ssh_host_*_key"
+  become: true
+- name: Set read-write permissions to public keys accordingly
+  ansible.builtin.shell:
+    cmd: "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
+  become: true
+- name: Hardening sshd_config file
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.parameter }}"
+    line: "{{ item.line }}"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify: restart_sshd
+  loop: "{{ sshd_options }}"
+- name: Add defined groups to allow to connect over ssh
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "AllowGroups {{ ssh_user }}"
+    insertafter: "^#VersionAddendum "
+    create: yes
+  become: yes
+- name: Add defined users to allow to connect over ssh
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "AllowUsers {{ ssh_user }}"
+    insertafter: "^#VersionAddendum "
+    create: yes
+  become: yes
+- name: Use only FIPS 140-2 compliant ciphers
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "Ciphers aes256-ctr,aes192-ctr,aes128-ctr"
+    insertafter: "^# Ciphers and keying"
+    create: yes
+  become: yes
+- name: Use only FIPS 140-2 compliant MAC algorithms
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "MACs hmac-sha2-256,hmac-sha2-512"
+    insertafter: "^#RekeyLimit "
+    create: yes
+  become: yes
+- name: Use only FIPS 140-2 compliant Key exchange algorithms
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256"
+    insertafter: "^#RekeyLimit "
+    create: yes
+  become: yes

@@ -1,0 +1,42 @@
+---
+sshd_options:
+  - parameter: "^#Port "
+    line: Port 2200
+  - parameter: "^#PermitRootLogin "
+    line: PermitRootLogin no
+  - parameter: "^#StrictModes "
+    line: StrictModes yes
+  - parameter: "^#MaxAuthTries "
+    line: MaxAuthTries 4
+  - parameter: "^#MaxSessions "
+    line: MaxSessions 10
+  - parameter: "^#PubkeyAuthentication "
+    line: PubkeyAuthentication yes
+  - parameter: "^#HostbasedAuthentication "
+    line: HostbasedAuthentication no
+  - parameter: "^#IgnoreUserKnownHosts "
+    line: IgnoreUserKnownHosts yes
+  - parameter: "^#IgnoreRhosts "
+    line: IgnoreRhosts yes
+  - parameter: "^#PasswordAuthentication "
+    line: PasswordAuthentication yes
+  - parameter: "^#PermitEmptyPasswords "
+    line: PermitEmptyPasswords no
+  - parameter: "^#KerberosAuthentication "
+    line: KerberosAuthentication no
+  - parameter: "^#GSSAPIAuthentication "
+    line: GSSAPIAuthentication no
+  - parameter: "^#UsePAM "
+    line: UsePAM yes
+  - parameter: "X11Forwarding yes"
+    line: X11Forwarding no
+  - parameter: "^#PrintLastLog "
+    line: PrintLastLog yes
+  - parameter: "^#Compression "
+    line: Compression yes
+  - parameter: "^#MaxStartups "
+    line: MaxStartups 10:30:60
+  - parameter: "^#KbdInteractiveAuthentication "
+    line: KbdInteractiveAuthentication no
+
+ssh_user: geert
