@@ -39,4 +39,4 @@ sshd_options:
   - parameter: "^#KbdInteractiveAuthentication "
     line: KbdInteractiveAuthentication no
 
-ssh_user: geert
+ssh_user: 
