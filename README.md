@@ -10,4 +10,4 @@ semanage port -l | grep 2200
 
 ## Special thanks to:
 * Jeff Geerling's [ansible-role-security](https://github.com/geerlingguy/ansible-role-security/tree/master);
-* Alicia Sykes [Server Setup](https://www.aliciasykes.com/blog/my-server-setup). Especially the 'Configure SSH' part.
+* Alicia Sykes [Server Setup](https://www.aliciasykes.com/blog/my-server-setup-). Especially the 'Configure SSH' part.
