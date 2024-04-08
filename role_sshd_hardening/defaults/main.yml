@@ -28,14 +28,10 @@ sshd_options:
     line: GSSAPIAuthentication no
   - parameter: "^#UsePAM "
     line: UsePAM yes
-  - parameter: "X11Forwarding yes"
-    line: X11Forwarding no
   - parameter: "^#PrintLastLog "
     line: PrintLastLog yes
   - parameter: "^#Compression "
     line: Compression yes
-  - parameter: "^#MaxStartups "
-    line: MaxStartups 10:30:60
   - parameter: "^#KbdInteractiveAuthentication "
     line: KbdInteractiveAuthentication no
 

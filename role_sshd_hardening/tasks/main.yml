@@ -10,14 +10,27 @@
     group: root
     mode: '0600'
   become: true
-- name: Set read permissions to keys accordingly
+- name: Set permissions to keys accordingly
   ansible.builtin.shell:
-    cmd: "chmod 0600 /etc/ssh/ssh_host_*_key"
+    cmd: "{{ item }}"
+  loop:
+  - "chmod 0600 /etc/ssh/ssh_host_*_key"
+  - "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
   become: true
-- name: Set read-write permissions to public keys accordingly
-  ansible.builtin.shell:
-    cmd: "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
-  become: true
+- name: Install selinux dependencies
+  ansible.builtin.dnf:
+    name:
+    - python3-policycoreutils
+    - policycoreutils-python-utils
+    state: latest
+  when: ansible_facts['os_family'] == "RedHat"
+- name: Allow sshd to listen on tcp port 2200
+  community.general.seport:
+    ports: 2200
+    proto: tcp
+    setype: ssh_port_t
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
 - name: Hardening sshd_config file
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -27,6 +40,16 @@
     group: root
     mode: '0644'
   loop: "{{ sshd_options }}"
+  notify: restart_sshd
+  become: true
+- name: Extra hardening for Ubuntu
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^X11Forwarding yes"
+    line: X11Forwarding no
+    owner: root
+    group: root
+  when: ansible_facts['os_family'] == "Debian"
   notify: restart_sshd
   become: true
 - name: Use only FIPS 140-2 compliant ciphers & algorithms
