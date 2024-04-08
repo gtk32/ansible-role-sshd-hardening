@@ -38,5 +38,3 @@ sshd_options:
     line: MaxStartups 10:30:60
   - parameter: "^#KbdInteractiveAuthentication "
     line: KbdInteractiveAuthentication no
-
-ssh_user: 
