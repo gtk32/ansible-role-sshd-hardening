@@ -10,14 +10,27 @@
     group: root
     mode: '0600'
   become: true
-- name: Set read permissions to keys accordingly
+- name: Set permissions to keys accordingly
   ansible.builtin.shell:
-    cmd: "chmod 0600 /etc/ssh/ssh_host_*_key"
+    cmd: "{{ item }}"
+  loop:
+  - "chmod 0600 /etc/ssh/ssh_host_*_key"
+  - "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
   become: true
-- name: Set read-write permissions to public keys accordingly
-  ansible.builtin.shell:
-    cmd: "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
-  become: true
+- name: Install selinux dependencies
+  ansible.builtin.dnf:
+    name:
+    - python3-policycoreutils
+    - policycoreutils-python-utils
+    state: latest
+  when: ansible_facts['os_family'] == "RedHat"
+- name: Allow sshd to listen on tcp port 2200
+  community.general.seport:
+    ports: 2200
+    proto: tcp
+    setype: ssh_port_t
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
 - name: Hardening sshd_config file
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -26,41 +39,25 @@
     owner: root
     group: root
     mode: '0644'
-  become: true
-  notify: restart_sshd
   loop: "{{ sshd_options }}"
-- name: Add defined groups to allow to connect over ssh
+  notify: restart_sshd
+  become: true
+- name: Extra hardening for Ubuntu
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    line: "AllowGroups {{ ssh_user }}"
-    insertafter: "^#VersionAddendum "
-    create: yes
-  become: yes
-- name: Add defined users to allow to connect over ssh
+    regexp: "^X11Forwarding yes"
+    line: X11Forwarding no
+    owner: root
+    group: root
+  when: ansible_facts['os_family'] == "Debian"
+  notify: restart_sshd
+  become: true
+- name: Use only FIPS 140-2 compliant ciphers & algorithms
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    line: "AllowUsers {{ ssh_user }}"
-    insertafter: "^#VersionAddendum "
+    line: "{{ item.line }}"
+    insertafter: "{{ item.regex }}"
     create: yes
-  become: yes
-- name: Use only FIPS 140-2 compliant ciphers
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    line: "Ciphers aes256-ctr,aes192-ctr,aes128-ctr"
-    insertafter: "^# Ciphers and keying"
-    create: yes
-  become: yes
-- name: Use only FIPS 140-2 compliant MAC algorithms
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    line: "MACs hmac-sha2-256,hmac-sha2-512"
-    insertafter: "^#RekeyLimit "
-    create: yes
-  become: yes
-- name: Use only FIPS 140-2 compliant Key exchange algorithms
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    line: "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256"
-    insertafter: "^#RekeyLimit "
-    create: yes
+  loop: "{{ fips140 }}"
+  notify: restart_sshd
   become: yes

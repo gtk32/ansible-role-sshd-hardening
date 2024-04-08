@@ -28,15 +28,17 @@ sshd_options:
     line: GSSAPIAuthentication no
   - parameter: "^#UsePAM "
     line: UsePAM yes
-  - parameter: "X11Forwarding yes"
-    line: X11Forwarding no
   - parameter: "^#PrintLastLog "
     line: PrintLastLog yes
   - parameter: "^#Compression "
     line: Compression yes
-  - parameter: "^#MaxStartups "
-    line: MaxStartups 10:30:60
   - parameter: "^#KbdInteractiveAuthentication "
     line: KbdInteractiveAuthentication no
 
-ssh_user: 
+fips140:
+  - regex: "^# Ciphers and keying"
+    line: "Ciphers aes256-ctr,aes192-ctr,aes128-ctr"
+  - regex: "^#RekeyLimit "
+    line: "MACs hmac-sha2-256,hmac-sha2-512"
+  - regex: "^#RekeyLimit "
+    line: "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256"
