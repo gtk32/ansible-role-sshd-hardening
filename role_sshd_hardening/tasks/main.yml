@@ -36,4 +36,5 @@
     insertafter: "{{ item.regex }}"
     create: yes
   loop: "{{ fips140 }}"
+  notify: restart_sshd
   become: yes
