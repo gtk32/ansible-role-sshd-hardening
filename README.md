@@ -1,7 +1,7 @@
 # Ansible role: sshd_config hardening
 This playbook can be used for security hardening with Ansible. Tested on Ubuntu 22.04 LTS, Rocky Linux 9 and AlmaLinux 9.  
 
-# To start the role
+## To start the role
 Create a playbook and import the role. The below example assumes that the role is located under the 'roles' directory within your ansible project.
 ```
 ---
