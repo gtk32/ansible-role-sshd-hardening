@@ -1,5 +1,7 @@
 # Ansible role: sshd_config hardening
-This playbook can be used for security hardening on fresh systems with Ansible. Tested on RHEL and derivatives (Rocky Linux 9 and AlmaLinux 9). Please note: I tried to find the sweet spot in terms of security and usability. Hence, not all modifications seems justified in terms of security hardening. You will by no means archieve a DMZ proof server by running this playbook. I always recommend to review the code by yourself and adjust it to your needs. The main purpose of this playbook is to get users to a solid starting point.
+This playbook can be used for security hardening on fresh systems with Ansible. Tested on RHEL and derivatives (Rocky Linux 9 and AlmaLinux 9). 
+
+Please note: I tried to find the sweet spot in terms of security and usability. Hence, not all modifications seems justified in terms of security hardening. You will by no means archieve a DMZ proof server by running this playbook. I always recommend to review the code by yourself and adjust it to your needs. The main purpose of this playbook is to get users to a solid starting point.
 
 ## What is does
 The role does the following:
