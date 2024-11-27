@@ -18,14 +18,14 @@ The role does the following:
 ## Variables
 The role uses several variables which you can thinker with based on the level of hardening one would like to archieve. 
 - crowdsec_gpg_keys: As the name inpliesm this variable contains the gpg keys of the crowdsec third party repository. Instructions and keys can be found on their [website](https://packagecloud.io/crowdsec/crowdsec/install#manual-rpm).
-- sshd_options: Variables which are used to configure the /etc/ssh/sshd_config file. You are free to changes these according to your needs. There are several being used. 
-- fips140: Only FIPS 140-2 compliant ciphers, to avoid weak encryption algorithms.
-- dnf_timer_options: Variables which are used to configure the /etc/dnf/automatic.conf configuration file. There are important adjustments configured:
-  - upgrade_type = default. All packages are being updates. You might want to change this to *security* if you only wish to update security packages.
-  - download_updates = yes
-  - apply_updates = yes
-  - reboot = when-needed. Reboots the system when specific packages are being updates which requires a reboot such as kernel related packages. You might want to turn this of by changing this to *never* when you don't want the dnf_timer trigger reboots. You can configure the reboot time by changing the *dnf_systemd_unit_line*.
-  - dnf_systemd_unit_line: Modifies the triggering of the systemd unit file (located at /usr/lib/systemd/system/dnf-automatic.timer). Currently it is being set to every friday at 4 AM Europe/Amsterdam timezone. This means that your system is automatically being updated once a week. Change accordingly to your needs.
+- **sshd_options**: Variables which are used to configure the /etc/ssh/sshd_config file. You are free to changes these according to your needs. There are several being used. 
+- **fips140**: Only FIPS 140-2 compliant ciphers, to avoid weak encryption algorithms.
+- **dnf_timer_options**: Variables which are used to configure the /etc/dnf/automatic.conf configuration file. There are important adjustments configured:
+  - **upgrade_type = default**. All packages are being updates. You might want to change this to *security* if you only wish to update security packages.
+  - **download_updates = yes**
+  - **apply_updates = yes**
+  - **reboot = when-needed**. Reboots the system when specific packages are being updates which requires a reboot such as kernel related packages. You might want to turn this of by changing this to *never* when you don't want the dnf_timer trigger reboots. You can configure the reboot time by changing the *dnf_systemd_unit_line*.
+  - **dnf_systemd_unit_line**: Modifies the triggering of the systemd unit file (located at /usr/lib/systemd/system/dnf-automatic.timer). Currently it is being set to every friday at 4 AM Europe/Amsterdam timezone. This means that your system is automatically being updated once a week. Change accordingly to your needs.
 
 ## To start the role
 Create a playbook and import the role. The below example assumes that the role is located under the 'roles' directory within your ansible project.
