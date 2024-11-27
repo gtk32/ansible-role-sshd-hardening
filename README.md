@@ -17,7 +17,7 @@ The role does the following:
 
 ## Variables
 The role uses several variables which you can thinker with based on the level of hardening one would like to archieve. 
-- crowdsec_gpg_keys: As the name inpliesm this variable contains the gpg keys of the crowdsec third party repository. Instructions and keys can be found on their [website](https://packagecloud.io/crowdsec/crowdsec/install#manual-rpm).
+- **crowdsec_gpg_keys**: As the name inpliesm this variable contains the gpg keys of the crowdsec third party repository. Instructions and keys can be found on their [website](https://packagecloud.io/crowdsec/crowdsec/install#manual-rpm).
 - **sshd_options**: Variables which are used to configure the /etc/ssh/sshd_config file. You are free to changes these according to your needs. There are several being used. 
 - **fips140**: Only FIPS 140-2 compliant ciphers, to avoid weak encryption algorithms.
 - **dnf_timer_options**: Variables which are used to configure the /etc/dnf/automatic.conf configuration file. There are important adjustments configured:
