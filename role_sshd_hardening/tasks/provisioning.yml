@@ -3,7 +3,6 @@
   ansible.builtin.dnf:
     name: "*"
     state: latest
-  when: ansible_facts['os_family'] == "RedHat" 
 
 - name: Install important packages
   ansible.builtin.dnf:
@@ -12,6 +11,7 @@
     - nmap-ncat
     - vim
     - yum-utils
+    - dnf-automatic
 
 - name: Create local user
   ansible.builtin.user:

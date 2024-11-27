@@ -1,4 +1,33 @@
 ---
+# Configure dnf automatic timer
+- name: Start and enable dnf-automatic timer
+  ansible.builtin.service:
+    name: dnf-automatic.timer
+    state: started
+    enabled: yes
+
+- name: Configure dnf-automatic timer config file
+  ansible.builtin.lineinfile:
+    path: /etc/dnf/automatic.conf
+    regexp: "{{ item.dnf_timer_parameter }}"
+    line: "{{ item.dnf_timer_line }}"
+  loop: "{{ dnf_timer_options }}"
+  notify: restart dnf_timer
+
+- name: Configure dnf-automatic timer systemd unit file
+  ansible.builtin.lineinfile:
+    path: /usr/lib/systemd/system/dnf-automatic.timer
+    regexp: "{{ dnf_systemd_unit_parameter }}"
+    line: "{{ dnf_systemd_unit_line }}"
+  notify: restart dnf_timer
+
+- name: Configure dnf-automatic timer systemd unit file
+  ansible.builtin.lineinfile:
+    path: /usr/lib/systemd/system/dnf-automatic.timer
+    state: absent
+    regexp: "^RandomizedDelaySec="
+  notify: restart dnf_timer
+
 # Configure firewalld
 - name: Install firewall
   ansible.builtin.dnf:
@@ -25,8 +54,7 @@
     state: present
     baseurl: https://packagecloud.io/crowdsec/crowdsec/el/9/$basearch
     gpgcheck: true
-    gpgkey: "{{ item }}"
-  loop: "{{ crowdsec_gpg_keys }}"
+    gpgkey: "{{ crowdsec_gpg_keys }}"
 
 - name: Configure Crowdsec source repository
   ansible.builtin.yum_repository:
@@ -35,8 +63,7 @@
     state: present
     baseurl: https://packagecloud.io/crowdsec/crowdsec/el/9/SRPMS
     gpgcheck: true
-    gpgkey: "{{ item }}"
-  loop: "{{ crowdsec_gpg_keys }}"
+    gpgkey: "{{ crowdsec_gpg_keys }}"
 
 - name: Install Crowdsec
   ansible.builtin.dnf:
@@ -44,4 +71,3 @@
     - crowdsec
     - crowdsec-firewall-bouncer-nftables
     state: latest
-  when: ansible_facts['os_family'] == "RedHat"

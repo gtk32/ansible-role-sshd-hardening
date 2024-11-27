@@ -3,16 +3,13 @@
 - name: Start task provisioning
   ansible.builtin.include_tasks:
     file: provisioning.yml
-  become: true
 
 # SSHD hardening
 - name: Start task sshd hardening
   ansible.builtin.include_tasks:
     file: sshd.yml
-  become: true
 
 # Add firewall and other security configurations
 - name: Start task security
   ansible.builtin.include_tasks:
     file: security.yml
-  become: true

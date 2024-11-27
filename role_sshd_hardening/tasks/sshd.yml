@@ -41,7 +41,6 @@
     mode: '0644'
   loop: "{{ sshd_options }}"
   notify: restart_sshd
-  become: true
 - name: Extra hardening for Ubuntu
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -51,7 +50,6 @@
     group: root
   when: ansible_facts['os_family'] == "Debian"
   notify: restart_sshd
-  become: true
 - name: Use only FIPS 140-2 compliant ciphers & algorithms
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -60,4 +58,3 @@
     create: yes
   loop: "{{ fips140 }}"
   notify: restart_sshd
-  become: true
