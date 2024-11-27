@@ -1,2 +1,13 @@
 ---
-# vars file for role_sshd_hardening
+# Security.yml
+dnf_timer_options:
+  - dnf_timer_parameter: "^upgrade_type = "
+    dnf_timer_line: "upgrade_type = default"
+  - dnf_timer_parameter: "^download_updates = "
+    dnf_timer_line: "download_updates = yes"
+  - dnf_timer_parameter: "^apply_updates = "
+    dnf_timer_line: "apply_updates = yes"
+  - dnf_timer_parameter: "^reboot = "
+    dnf_timer_line: "reboot = when-needed"
+dnf_systemd_unit_parameter: "^OnCalendar="
+dnf_systemd_unit_line: "OnCalendar=Fri 4:00:00 Europe/Amsterdam"

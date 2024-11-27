@@ -1,0 +1,30 @@
+---
+- name: Update all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+
+- name: Install important packages
+  ansible.builtin.dnf:
+    name:
+    - tar
+    - nmap-ncat
+    - vim
+    - yum-utils
+    - dnf-automatic
+
+- name: Create local user
+  ansible.builtin.user:
+    name: "{{ user }}"
+    expires: "{{ user_expire_date }}"
+    password: "{{ user_password }}"
+    update_password: on_create
+
+- name: Enable SELinux
+  ansible.posix.selinux:
+    policy: targeted
+    state: enforcing
+
+- name: Reboot system
+  ansible.builtin.reboot:
+    msg: "Rebooting machine in 5 seconds"

@@ -1,63 +1,15 @@
 ---
-- name: Check if sshd daemon is running
-  ansible.builtin.service:
-    name: sshd
-    state: started
-- name: Set permissions to read-only accordingly
-  ansible.builtin.file:
-    path: "/etc/ssh/sshd_config"
-    owner: root
-    group: root
-    mode: '0600'
-  become: true
-- name: Set permissions to keys accordingly
-  ansible.builtin.shell:
-    cmd: "{{ item }}"
-  loop:
-  - "chmod 0600 /etc/ssh/ssh_host_*_key"
-  - "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
-  become: true
-- name: Install selinux dependencies
-  ansible.builtin.dnf:
-    name:
-    - python3-policycoreutils
-    - policycoreutils-python-utils
-    state: latest
-  when: ansible_facts['os_family'] == "RedHat"
-- name: Allow sshd to listen on tcp port 2200
-  community.general.seport:
-    ports: 2200
-    proto: tcp
-    setype: ssh_port_t
-    state: present
-  when: ansible_facts['os_family'] == "RedHat"
-- name: Hardening sshd_config file
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "{{ item.parameter }}"
-    line: "{{ item.line }}"
-    owner: root
-    group: root
-    mode: '0644'
-  loop: "{{ sshd_options }}"
-  notify: restart_sshd
-  become: true
-- name: Extra hardening for Ubuntu
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "^X11Forwarding yes"
-    line: X11Forwarding no
-    owner: root
-    group: root
-  when: ansible_facts['os_family'] == "Debian"
-  notify: restart_sshd
-  become: true
-- name: Use only FIPS 140-2 compliant ciphers & algorithms
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    line: "{{ item.line }}"
-    insertafter: "{{ item.regex }}"
-    create: yes
-  loop: "{{ fips140 }}"
-  notify: restart_sshd
-  become: true
+# Provisioning of server
+- name: Start task provisioning
+  ansible.builtin.include_tasks:
+    file: provisioning.yml
+
+# SSHD hardening
+- name: Start task sshd hardening
+  ansible.builtin.include_tasks:
+    file: sshd.yml
+
+# Add firewall and other security configurations
+- name: Start task security
+  ansible.builtin.include_tasks:
+    file: security.yml

@@ -4,3 +4,9 @@
     name: sshd
     state: restarted
   become: true
+
+- name: restart dnf_timer
+  ansible.builtin.service:
+    name: dnf-automatic.timer
+    state: restarted
+  become: true
