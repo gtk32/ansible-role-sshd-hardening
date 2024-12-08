@@ -1,52 +1,38 @@
 ---
-# security.yml
-crowdsec_gpg_keys:
-- https://packagecloud.io/crowdsec/crowdsec/gpgkey
-- https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-EDE2C695EC9A5A5C.pub.gpg
-- https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-C822EDD6B39954A1.pub.gpg
-- https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-FED78314A2468CCF.pub.gpg
+# provisioning.yml
+packages_list:
+  - tar
+  - nmap-ncat
+  - vim
+  - yum-utils
+  - dnf-automatic
+  - bind-utils
+  - epel-release
+  - python3-policycoreutils
+  - policycoreutils-python-utils
+security_fail2ban_jail_template: "jail.local.j2"
 
 # sshd.yml
-sshd_options:
-  - parameter: "^#Port "
-    line: Port 2200
-  - parameter: "^#PermitRootLogin "
-    line: PermitRootLogin no
-  - parameter: "^#StrictModes "
-    line: StrictModes yes
-  - parameter: "^#MaxAuthTries "
-    line: MaxAuthTries 4
-  - parameter: "^#MaxSessions "
-    line: MaxSessions 10
-  - parameter: "^#PubkeyAuthentication "
-    line: PubkeyAuthentication yes
-  - parameter: "^#HostbasedAuthentication "
-    line: HostbasedAuthentication no
-  - parameter: "^#IgnoreUserKnownHosts "
-    line: IgnoreUserKnownHosts yes
-  - parameter: "^#IgnoreRhosts "
-    line: IgnoreRhosts yes
-  - parameter: "^#PasswordAuthentication "
-    line: PasswordAuthentication yes
-  - parameter: "^#PermitEmptyPasswords "
-    line: PermitEmptyPasswords no
-  - parameter: "^#KerberosAuthentication "
-    line: KerberosAuthentication no
-  - parameter: "^#GSSAPIAuthentication "
-    line: GSSAPIAuthentication no
-  - parameter: "^#UsePAM "
-    line: UsePAM yes
-  - parameter: "^#PrintLastLog "
-    line: PrintLastLog yes
-  - parameter: "^#Compression "
-    line: Compression yes
-  - parameter: "^#KbdInteractiveAuthentication "
-    line: KbdInteractiveAuthentication no
+sshd_port: 2200
+sshd_permitrootlogin: "no"
+sshd_strictmodes: "yes"
+sshd_maxauthtries: 4
+sshd_maxsessions: 10
+sshd_pubkeyauthentication: "yes"
+sshd_hostbasedauthentication: "no"
+sshd_ignoreuserknownhosts: "yes"
+sshd_ignorerhosts: "yes"
+sshd_passwordauthentication: "no"
+sshd_permitemptypasswords: "no"
+sshd_kerberosauthentication: "no"
+sshd_gssapiauthentication: "no"
+sshd_usepam: "yes"
+sshd_printlastlog: "yes"
+sshd_compression: "yes"
+sshd_kbdinteractiveauthentication: "no"
 
-fips140:
-  - regex: "^# Ciphers and keying"
-    line: "Ciphers aes256-ctr,aes192-ctr,aes128-ctr"
-  - regex: "^#RekeyLimit "
-    line: "MACs hmac-sha2-256,hmac-sha2-512"
-  - regex: "^#RekeyLimit "
-    line: "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256"
+sshd_cipers: "Ciphers aes256-ctr,aes192-ctr,aes128-ctr"
+sshd_macs: "MACs hmac-sha2-256,hmac-sha2-512"
+sshd_kexalgorithms: "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256"
+
+sshd_config_template: sshd_config.j2
