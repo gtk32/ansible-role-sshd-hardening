@@ -1,12 +1,17 @@
 ---
-- name: restart_sshd
+- name: Restart_sshd
   ansible.builtin.service:
     name: sshd
     state: restarted
   become: true
 
-- name: restart dnf_timer
+- name: Restart dnf_timer
   ansible.builtin.service:
     name: dnf-automatic.timer
     state: restarted
   become: true
+
+- name: Reload_fail2ban
+  ansible.builtin.service:
+    name: fail2ban
+    state: reloaded

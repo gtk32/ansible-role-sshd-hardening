@@ -17,13 +17,6 @@
     - "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
   register: result
   changed_when: result.rc != 0
-- name: Install selinux dependencies
-  ansible.builtin.dnf:
-    name:
-      - python3-policycoreutils
-      - policycoreutils-python-utils
-    state: present
-  when: ansible_facts['os_family'] == "RedHat"
 - name: Allow sshd to listen on tcp port 2200
   community.general.seport:
     ports: 2200
@@ -32,32 +25,12 @@
     state: present
   when: ansible_facts['os_family'] == "RedHat"
 - name: Hardening sshd_config file
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "{{ item.parameter }}"
-    line: "{{ item.line }}"
+  ansible.builtin.template:
+    src: "{{ sshd_config_template }}"
+    dest: /etc/ssh/sshd_config
     owner: root
     group: root
     mode: '0644'
-  loop: "{{ sshd_options }}"
-  notify: Restart_sshd
-- name: Extra hardening for Ubuntu
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "^X11Forwarding yes"
-    line: X11Forwarding no
-    owner: root
-    group: root
-  when: ansible_facts['os_family'] == "Debian"
-  notify: Restart_sshd
-- name: Use only FIPS 140-2 compliant ciphers & algorithms
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    line: "{{ item.line }}"
-    insertafter: "{{ item.regex }}"
-    create: true
-    owner: root
-    group: root
-    mode: "0644"
-  loop: "{{ fips140 }}"
+    validate: /usr/sbin/sshd -t -f %s
+    backup: true
   notify: Restart_sshd
