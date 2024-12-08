@@ -9,20 +9,20 @@
     owner: root
     group: root
     mode: '0600'
-  become: true
 - name: Set permissions to keys accordingly
   ansible.builtin.shell:
     cmd: "{{ item }}"
   loop:
-  - "chmod 0600 /etc/ssh/ssh_host_*_key"
-  - "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
-  become: true
+    - "chmod 0600 /etc/ssh/ssh_host_*_key"
+    - "chmod 0644 /etc/ssh/ssh_host_*_key.pub"
+  register: result
+  changed_when: result.rc != 0
 - name: Install selinux dependencies
   ansible.builtin.dnf:
     name:
-    - python3-policycoreutils
-    - policycoreutils-python-utils
-    state: latest
+      - python3-policycoreutils
+      - policycoreutils-python-utils
+    state: present
   when: ansible_facts['os_family'] == "RedHat"
 - name: Allow sshd to listen on tcp port 2200
   community.general.seport:
@@ -40,7 +40,7 @@
     group: root
     mode: '0644'
   loop: "{{ sshd_options }}"
-  notify: restart_sshd
+  notify: Restart_sshd
 - name: Extra hardening for Ubuntu
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -49,12 +49,15 @@
     owner: root
     group: root
   when: ansible_facts['os_family'] == "Debian"
-  notify: restart_sshd
+  notify: Restart_sshd
 - name: Use only FIPS 140-2 compliant ciphers & algorithms
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     line: "{{ item.line }}"
     insertafter: "{{ item.regex }}"
-    create: yes
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
   loop: "{{ fips140 }}"
-  notify: restart_sshd
+  notify: Restart_sshd
