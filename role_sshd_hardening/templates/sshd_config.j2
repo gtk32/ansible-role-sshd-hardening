@@ -47,6 +47,8 @@ MaxSessions {{ sshd_maxsessions }}
 
 PubkeyAuthentication {{ sshd_pubkeyauthentication }}
 
+# Geert only specific user's access
+AllowUsers {{ user }}
 # The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
 # but this is overridden so installations will only check .ssh/authorized_keys
 AuthorizedKeysFile	.ssh/authorized_keys

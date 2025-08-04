@@ -1,50 +1,58 @@
 ---
 # Configure dnf automatic timer
-- name: Start and enable dnf-automatic timer
-  ansible.builtin.service:
-    name: dnf-automatic.timer
-    state: started
-    enabled: true
+- name: Set up dnf-automatic timer feature
+  block:
+  - name: Start and enable dnf-automatic timer
+    ansible.builtin.service:
+      name: dnf-automatic.timer
+      state: started
+      enabled: true
 
-- name: Configure dnf-automatic timer config file
-  ansible.builtin.lineinfile:
-    path: /etc/dnf/automatic.conf
-    regexp: "{{ item.dnf_timer_parameter }}"
-    line: "{{ item.dnf_timer_line }}"
-  loop: "{{ dnf_timer_options }}"
-  notify: Restart dnf_timer
+  - name: Configure dnf-automatic timer config file
+    ansible.builtin.lineinfile:
+      path: /etc/dnf/automatic.conf
+      regexp: "{{ item.dnf_timer_parameter }}"
+      line: "{{ item.dnf_timer_line }}"
+    loop: "{{ dnf_timer_options }}"
+    notify: Restart dnf_timer
 
-- name: Configure dnf-automatic timer systemd unit file
-  ansible.builtin.lineinfile:
-    path: /usr/lib/systemd/system/dnf-automatic.timer
-    regexp: "{{ dnf_systemd_unit_parameter }}"
-    line: "{{ dnf_systemd_unit_line }}"
-  notify: Restart dnf_timer
+  - name: Configure dnf-automatic timer systemd unit file
+    ansible.builtin.lineinfile:
+      path: /usr/lib/systemd/system/dnf-automatic.timer
+      regexp: "{{ dnf_systemd_unit_parameter }}"
+      line: "{{ dnf_systemd_unit_line }}"
+    notify: Restart dnf_timer
 
-- name: Configure dnf-automatic timer systemd unit file
-  ansible.builtin.lineinfile:
-    path: /usr/lib/systemd/system/dnf-automatic.timer
-    state: absent
-    regexp: "^RandomizedDelaySec="
-  notify: Restart dnf_timer
+  - name: Configure dnf-automatic timer systemd unit file
+    ansible.builtin.lineinfile:
+      path: /usr/lib/systemd/system/dnf-automatic.timer
+      state: absent
+      regexp: "^RandomizedDelaySec="
+    notify: Restart dnf_timer
+  when: dnf_automatic_timer
 
 # Configure firewalld
-- name: Install firewall
-  ansible.builtin.dnf:
-    name: firewalld
+- name: Configure firewalld
+  block:
+  - name: Install firewall
+    ansible.builtin.dnf:
+      name: firewalld
 
-- name: Enable & start the firewall
-  ansible.builtin.service:
-    name: firewalld
-    state: started
-    enabled: true
+  - name: Enable & start the firewall
+    ansible.builtin.service:
+      name: firewalld
+      state: started
+      enabled: true
 
-- name: Port configuration
-  ansible.posix.firewalld:
-    port: 2200/tcp
-    state: enabled
-    permanent: true
-    immediate: true
+  - name: Port configuration
+    ansible.posix.firewalld:
+      port: 2200/tcp
+      state: enabled
+      permanent: true
+      immediate: true
+      forward: false
+    when: custom_sshd_port
+  when: configure_firewalld
 
 # Install and configure fail2ban
 - name: Install & configure fail2ban
@@ -69,3 +77,4 @@
         name: fail2ban
         state: started
         enabled: true
+  when: fail2ban_active

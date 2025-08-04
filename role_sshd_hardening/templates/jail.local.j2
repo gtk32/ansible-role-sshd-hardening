@@ -1,5 +1,5 @@
 [sshd]
 enabled = true
-port    = 2200
+port    = {{ 2200 if sshd_custom_port else 22 }}
 filter  = sshd
 backend = systemd

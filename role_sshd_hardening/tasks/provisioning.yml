@@ -15,8 +15,8 @@
     name: "{{ user }}"
     expires: "{{ user_expire_date }}"
     password: "{{ user_password }}"
-    update_password: on_create
-    groups: adm
+    groups: wheel
+  when: add_local_user
 
 - name: Enable SELinux
   ansible.posix.selinux:
