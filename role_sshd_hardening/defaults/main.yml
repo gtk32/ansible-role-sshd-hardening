@@ -7,7 +7,6 @@ packages_list:
   - yum-utils
   - dnf-automatic
   - bind-utils
-  - epel-release
   - python3-policycoreutils
   - policycoreutils-python-utils
 security_fail2ban_jail_template: "jail.local.j2"
@@ -36,3 +35,10 @@ sshd_macs: "MACs hmac-sha2-256,hmac-sha2-512"
 sshd_kexalgorithms: "KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256"
 
 sshd_config_template: sshd_config.j2
+
+# General
+configure_firewalld: true
+add_local_user: true
+dnf_automatic_timer: true
+custom_sshd_port: true
+fail2ban_active: true

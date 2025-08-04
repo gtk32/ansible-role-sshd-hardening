@@ -18,7 +18,11 @@ Include /etc/ssh/sshd_config.d/*.conf
 # SELinux about this change.
 # semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
 #
-Port {{ sshd_port }}
+{% if custom_sshd_port %}
+Port 2200
+{% else %}
+Port 22
+{% endif %}
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
